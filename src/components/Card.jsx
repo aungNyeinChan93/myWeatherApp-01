@@ -1,12 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 // import { LuCloudy } from "react-icons/lu";
 import { FiCloudRain } from "react-icons/fi";
 import { TiLocationArrow } from "react-icons/ti";
 import { GiSpeedometer } from "react-icons/gi";
+import Clock from "react-clock";
+import "react-clock/dist/Clock.css";
 
-const Card = ({ data,error,errorMessage }) => {
-  if(error){
-    return <h1 className="text-center text-danger bg-white my-5">{errorMessage.response.data.message}</h1>
+const Card = ({ data, error, errorMessage }) => {
+  const [value, setValue] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => setValue(new Date()), 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  if (error) {
+    return (
+      <h1 className="text-center text-danger bg-white my-5">
+        {errorMessage.response.data.message}
+      </h1>
+    );
   }
   if (JSON.stringify(data) === "{}") {
     return <h1 className="text-center">Loading...</h1>;
@@ -15,11 +30,13 @@ const Card = ({ data,error,errorMessage }) => {
     return (
       <div className="Card container-fluid min-vh-100 ">
         <div className="row bg-light">
-          <div className="col-12 col-lg-8">
+          <div className="col-12 col-lg-8 ">
             <div className="card-container container-fluid bg-dark-subtle text-start rounded-3 p-4">
-              <p className="fs-5">Time : {data.timezone}</p>
+              <div className="ms-1 mb-3">
+                <Clock value={value}  />
+              </div>
               <h1>
-                {data.name}, {data.sys.country}
+                {data.name}, {data.sys.country}, {data.timezone}
               </h1>
               <div className="weather-icon fs-1 text-danger text-start  ">
                 <span className="ms-2 ">
@@ -58,7 +75,7 @@ const Card = ({ data,error,errorMessage }) => {
                   </span>
                 </div>
               </div>
-              <div className="row unit-group">
+              <div className="row unit-group mt-1">
                 <div className=" col-12 offset-lg-1 col-lg-5 p-1 text-center text-lg-start ">
                   Humidity : {data.main.humidity} %
                 </div>
@@ -74,14 +91,16 @@ const Card = ({ data,error,errorMessage }) => {
               </div>
             </div>
           </div>
-          <div className="col-12 col-lg-4 justify-content-center align-items-center d-flex flex-column ">
+          <div className="rounded-3 col-12 col-lg-4 bg-secondary justify-content-evenly align-items-center d-flex flex-column ">
             <div className="container-fluid bg-dark-subtle rounded my-2 shado-sm  ">
               <img
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6PGn76mNtF1O_cz67Pu6TonhPxXwLaWatSQ&s"
                 alt="weather-img"
                 className="col-12 img-fluid object-fit-sm-fill rounded-circle my-3 p-3"
               />
-              <div>
+              
+            </div>
+            <div className="bg-dark-subtle p-4 rounded">
                 <h5 className="my-2 text-center">
                   Feels like {data.main.temp}°C.{" "}
                   <span className=" text-capitalize">
@@ -89,8 +108,9 @@ const Card = ({ data,error,errorMessage }) => {
                   </span>
                 </h5>
               </div>
-            </div>
           </div>
+          
+
         </div>
       </div>
     );
